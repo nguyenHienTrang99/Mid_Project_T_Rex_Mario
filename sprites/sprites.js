@@ -1,10 +1,10 @@
-var mountainImages = ['imgs/scene/mountains01.png', 'imgs/scene/mountains02.png', 'imgs/scene/mountains03.png', 'imgs/scene/mountains04.png'];
-var cloudImages = ['imgs/scene/cloud01.png', 'imgs/scene/cloud02.png'];
-var brickImages = ['imgs/blocks/blocks001.png', 'imgs/blocks/blocks002.png', 'imgs/blocks/blocks003.png'];
-var thighsImags = ['imgs/blocks/thigh01.png', 'imgs/blocks/thigh05.png'];
-var pipeImages = ['imgs/scene/tube.png'];
-var platformImages = ['imgs/scene/platform.png'];
-var enemyMushroomImage = ['imgs/enemy/enemyMushroom01.png', 'imgs/enemy/enemyMushroom02.png'];
+var mountainImages = ['imgs/mountains01.png', 'imgs/mountains02.png', 'imgs/mountains03.png', 'imgs/mountains04.png'];
+var cloudImages = ['imgs/cloud01.png', 'imgs/cloud02.png'];
+var brickImages = ['imgs/blocks001.png', 'imgs/blocks002.png', 'imgs/blocks003.png'];
+var thighsImags = ['imgs/thigh01.png', 'imgs/thigh05.png'];
+var pipeImages = ['imgs/tube.png'];
+var platformImages = ['imgs/platform.png'];
+var enemyMushroomImage = ['imgs/enemyMushroom01.png', 'imgs/enemyMushroom02.png'];
 
 var spriteNumber = {
     mountain: 10,
@@ -60,7 +60,7 @@ function loadAnimatedObjects(group, imageArray, animationName, spriteNumber, spr
 
 
 function loadPlatforms() {
-    img = loadImage('imgs/scene/platform.png');
+    img = loadImage('imgs/platform.png');
     for (i = 0; i < 70; i++) {
         randomNumber = random();
         if (randomNumber > 0.2) {
@@ -75,8 +75,8 @@ function loadPlatforms() {
 
 function T_Rex_Animation() {
     T_rex = createSprite(gaConfig.startingPointX, gaConfig.startingPointY, gaConfig.startingPoint, 0.5);
-    T_rex.addAnimation("stand", 'imgs/tRex/rex06.png');
-    T_rex.addAnimation("move", 'imgs/tRex/rex01.png', 'imgs/tRex/rex03.png');
-    T_rex.addAnimation("jump", 'imgs/tRex/rex05.png');
-    T_rex.addAnimation("dead", 'imgs/tRex/rex24.png');
+    T_rex.addAnimation("stand", 'imgs/rex06.png');
+    T_rex.addAnimation("move", 'imgs/rex01.png', 'imgs/rex03.png');
+    T_rex.addAnimation("jump", 'imgs/rex05.png');
+    T_rex.addAnimation("dead", 'imgs/rex24.png');
 };
