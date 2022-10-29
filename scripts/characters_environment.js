@@ -1,5 +1,7 @@
+// Biến chính
 var T_rex, bricks, clouds, mountains, enemyMushrooms, pipes, platforms, thighs;
 
+// Biến obj này để điều khiển ( 32 = SPACE ) 
 var control = {
     up: "UP_ARROW",
     left: 'LEFT_ARROW',
@@ -7,30 +9,38 @@ var control = {
     revive: 32
 }
 
+
+// Cài đặt trò chơi 
 class gameConfig {
     constructor(status, initialLifes, moveSpeed, enemyMoveSpeed, gravity, gravityEnemy, jump, startingPointX, startingPointY, screenX, screenY, timeScores, scores) {
-        this.status = status;
-        this.initialLifes = initialLifes;
-        this.moveSpeed = moveSpeed;
+        this.status = status; // trạng thái ( play , game over , start )
+        this.initialLifes = initialLifes; // Số mạng 
+        // Tốc độ di chuyển nhân vật 
+        this.moveSpeed = moveSpeed; 
         this.enemyMoveSpeed = enemyMoveSpeed;
+        // Trọng lực và tốc độ nhảy 
         this.gravity = gravity;
         this.gravityEnemy = gravityEnemy;
         this.jump = jump;
+        // Điểm xuất phát của nhân vật 
         this.startingPointX = startingPointX;
         this.startingPointY = startingPointY;
+        // Kích thước canvas mặc định 
         this.screenX = screenX;
         this.screenY = screenY;
+        // Tính điểm 
         this.timeScores = timeScores;
         this.scores = scores;
 
     }
 }
 
-
+// Tạo đối tượng gameConfig 
 let gaConfig = new gameConfig("start", 3, 3.5, 0.75, 1, 10, -30, 50, 50, 1350, 650, 0, 0);
 
 
 function game() {
+    // Check game 
     instializeInDraw();
     moveEnvironment(T_rex);
     drawSprites();
@@ -55,7 +65,7 @@ function game() {
         scores(T_rex);
         manualControl(T_rex);
     }
-
+    // Nếu game OVer 
     if (gaConfig.status === 'gameover') {
         fill(0, 0, 0, 150);
         rect(0, 0, gaConfig.screenX, gaConfig.screenY);
@@ -72,10 +82,10 @@ function game() {
         strokeWeight(7);
         noFill();
         ellipse(gaConfig.screenX / 2, gaConfig.screenY / 2 - 30, 160, 160);
-        changeGameStatud(T_rex);
+        changeGameStatud(T_rex); 
     }
 }
-
+// Đổi trạng thái trò chơi khi nhấn phím bất kì tùy vào lúc ấy là status nào 
 function changeGameStatud(character) {
     if ((keyDown(control.up) || keyDown(control.left) || keyDown(control.right)) && gaConfig.status === "start") {
         initializeCharacterStatus(T_rex);
@@ -86,6 +96,7 @@ function changeGameStatud(character) {
     }
 }
 
+// Khởi tạo trạng thái 
 function instializeInSetup(character) {
     frameRate(120);
     character.scale = 0.35;
@@ -96,14 +107,15 @@ function instializeInSetup(character) {
     thighs.displace(platforms);
     thighs.collide(pipes);
     thighs.displace(bricks);
+    // Thay đổi qui mô đám mây và thiên thạch 
     clouds.forEach(function(element) {
         element.scale = random(1, 2);
     })
 }
-
+//Khởi tạo trạng thái nhân vật 
 function initializeCharacterStatus(character) {
     character.scale = 0.35;
-    character["killing"] = 0;
+    character["killing"] = 0; // Khi đang giết con bọ 
     character["kills"] = 0;
     character["live"] = true;
     character["liveNumber"] = gaConfig.initialLifes;
@@ -121,25 +133,27 @@ function instializeInDraw() {
     } else {
         T_rex.killing = 0;
     }
-
+    // Làm các đối tượng không chồng lên nhau 
     pipes.displace(pipes);
     enemyMushrooms.displace(enemyMushrooms);
     enemyMushrooms.collide(pipes);
     clouds.displace(clouds);
-
+    // Làm nhân vật không chồng lên các đối tượng khác 
     if (T_rex.live) {
         bricks.displace(T_rex);
         pipes.displace(T_rex);
         enemyMushrooms.displace(T_rex);
         platforms.displace(T_rex);
     }
-
     T_rex["standOnObj"] = false;
     T_rex.velocity.x = 0;
     T_rex.maxSpeed = 20;
 
 }
 
+// Tương tác với nhau 
+
+// T-rex ăn được đùi gà 
 function getThighs(thigh, character) {
     if (character.overlap(thigh) && character.live && thigh.get == false) {
         character.thighs += 1;
@@ -147,7 +161,7 @@ function getThighs(thigh, character) {
     };
 }
 
-
+// Xuất hiện lại đùi gà sau khi t-rex ăn
 function thighVanish(thigh) {
     if (thigh.get) {
         thigh.position.x = random(50, gaConfig.screenX) + gaConfig.screenX;
@@ -155,10 +169,13 @@ function thighVanish(thigh) {
     };
 }
 
+// Điều khiển T-Rex
+
+// 
+
 function positionOfCharacter(character) {
-
     if (character.live) {
-
+        // Xem có đứng trên gạch không
         platforms.forEach(function(element) {
             standOnObjs(character, element);
         });
@@ -168,33 +185,36 @@ function positionOfCharacter(character) {
         pipes.forEach(function(element) {
             standOnObjs(character, element);
         });
-
+        // Bị trọng lực tác động 
         falling(character);
+        // Nhân vật nhảy được khi đứng trên đối tượng 
         if (character.standOnObj) jumping(character);
 
     }
-
+    // Sự kiện với đùi gà 
     thighs.forEach(function(element) {
         getThighs(element, T_rex);
         thighVanish(element);
     });
-
+    // Sự kiện tương tác với bọ
     enemyMushrooms.forEach(function(element) {
         StepOnEnemy(character, element);
         if ((element.touching.left || element.touching.right) && character.live && character.killing === 0) die(T_rex);
 
     })
-
+    // Giữ T_rex trong màn hình
     dontGetOutOfScreen(T_rex);
 
 }
 
+// Tự động dịch chuyển khi kẹp 
 function autoControl(character) {
     character.velocity.x += gaConfig.moveSpeed;
     character.changeAnimation('move');
     character.mirrorX(1);
 }
 
+// Nhân vật điều khiển bằng tay
 function manualControl(character) {
 
     if (character.live) {
@@ -245,6 +265,7 @@ function standOnObjs(obj1, obj2) {
     }
 }
 
+// Nếu T_Rex giết bọ 
 function StepOnEnemy(obj1, obj2) {
     var obj1_Left = leftSide(obj1);
     var obj1_Right = rightSide(obj1);
@@ -267,6 +288,7 @@ function StepOnEnemy(obj1, obj2) {
     }
 }
 
+// Nếu T_rex chạm vào bọ
 function die(character) {
     character.live = false;
     character.dying += 120;
@@ -276,6 +298,7 @@ function die(character) {
     character.velocity.y -= 2;
 }
 
+// Giảm mạng và xem game over chưa 
 function checkStatus(character) {
     if (character.live == false) {
         character.changeAnimation('dead');
@@ -288,22 +311,26 @@ function checkStatus(character) {
 
 }
 
+// hồi sinh 
 function reviveAfterMusic(character) {
     if (character.live === false && T_rex.liveNumber !== 0 && character.dying === 0) {
         character.live = true;
         character.status = "live";
-        character.position.x = 500;
-        character.position.y = 40;
+        character.position.x = 50;
+        character.position.y = 50;
         character.velocity.y = 0;
     }
 }
 
+// Làm nhân vật ở trong màn hình 
 function dontGetOutOfScreen(character) {
 
+    // Nếu bị rơi xuống hố 
     if (character.position.y > gaConfig.screenY && character.live && character == T_rex) {
         die(T_rex);
     }
 
+    
     if (character.position.x > gaConfig.screenX - (character.width * 0.5)) {
         character.position.x = gaConfig.screenX - (character.width * 0.5);
     } else if (character.position.x < character.width * 0.5) {
@@ -324,6 +351,7 @@ function enemys(enemys) {
     });
 }
 
+// Kiểm tra tình trạng con  
 function stateOfEnemy(enemy) {
     if (enemy.live == false || enemy.position.y > gaConfig.screenY + 50) {
         enemy.position.x = random(gaConfig.screenX * 1.5, 2 * gaConfig.screenX + 50);
@@ -332,6 +360,7 @@ function stateOfEnemy(enemy) {
     }
 }
 
+// Phản ứng các obj khác với bọbọ
 function positionOfEnemy(enemy) {
 
     platforms.forEach(function(element) {
@@ -379,30 +408,35 @@ function moveEnvironment(character) {
     }
 }
 
+
+// Băng truyền hình 
 function environmentScrolling(group, environmentScrollingSpeed) {
     group.forEach(function(element) {
         if (element.position.x > -50) {
             element.position.x -= environmentScrollingSpeed;
         } else {
             element.position.x = gaConfig.screenX + 50;
-
+            //  Các block random từ khoảng 1/3 - 3/4 màn hình
             if (group === bricks) {
                 element.position.y = random(gaConfig.screenY * 0.35, gaConfig.screenY * 0.75);
             }
-
+           
+            // Ống nước và núi đồi random theo trục X 
             if (group === pipes || group === mountains) {
                 element.position.x = random(50, gaConfig.screenX) + gaConfig.screenX;
             }
 
+            // Các đám mây Ngẫu nhiên vị trí mây 1/2 mh 
             if (group === clouds) {
                 element.position.x = random(50, gaConfig.screenX) + gaConfig.screenX;
                 element.position.y = random(0, gaConfig.screenY * 0.5);
                 element.scale = random(0.3, 1.5);
             }
 
+            // Đùi gà ngẫu nhiên 2/3 màn hình theo X và Y
             if (group === thighs) {
                 element.position.x = random(0, gaConfig.screenX) + gaConfig.screenX;
-                element.position.y = random(gaConfig.screenY * 0.2, gaConfig.screenY * 0.8);
+                element.position.y = random(gaConfig.screenY * 0.2, gaConfig.screenY * 0.6);
             }
 
         }
@@ -430,13 +464,14 @@ function debugging(character) {
 
 }
 
+// tính điểm 
 
 function scores(character) {
     strokeWeight(0);
     fill(0, 0, 0, 71);
     textSize(40);
 
-    gaConfig.scores = character.thighs + character.kills + gaConfig.timeScores;
+    gaConfig.scores = character.thighs + character.kills + gaConfig.timeScores; // Điểm = số đùi gà ăn đươc + số con bọ giết được + điểm theo thời gian sinh tồn 
     if (character.live && gaConfig.status === 'play') gaConfig.timeScores += 0.02;
     text("scores: " + round(gaConfig.scores), 20, 40);
     text("lives: " + character.liveNumber, 20, 80);
@@ -459,10 +494,12 @@ function scores(character) {
     }
 }
 
+// tạo hình dạng đi 
 function outline(obj) {
     rect(leftSide(obj), upSide(obj), rightSide(obj) - leftSide(obj), downSide(obj) - upSide(obj));
 }
 
+// Xác định hướng cho con bọ và cái ống 
 function leftSide(obj) {
     return obj.position.x - (obj.width / 2);
 }
