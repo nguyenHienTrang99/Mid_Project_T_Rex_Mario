@@ -15,7 +15,6 @@ var spriteNumber = {
     enemyMushroom: 8,
 }
 
-// Cài đặt cấu hình cho sprite 
 function setSprites() {
     setSpriteGroups();
     loadStaticObjects(mountains, mountainImages, spriteNumber.mountain, 1.5, gaConfig.screenX, gaConfig.screenY - 35, gaConfig.screenY - 35);
@@ -27,7 +26,7 @@ function setSprites() {
     loadPlatforms();
 }
 
-// Khai báo các đối tượng 
+
 function setSpriteGroups() {
     bricks = new Group();
     enemyMushrooms = new Group();
@@ -38,7 +37,7 @@ function setSpriteGroups() {
     thighs = new Group();
 };
 
-// cài đặt các đối tượng tĩnh 
+// Set up non-moving objects 
 function loadStaticObjects(group, imageArray, spriteNumber, randomPosStartX, randomPosEndX, randomPosStartY, randomPosEndY) {
     for (var i = 0; i < spriteNumber; i++) {
         var randomNumber = floor((random() * 10) % imageArray.length);
@@ -48,7 +47,7 @@ function loadStaticObjects(group, imageArray, spriteNumber, randomPosStartX, ran
     }
 };
 
-// cài đặt đối tượng có hoạt cảnh 
+// Set up moving and animated objects 
 function loadAnimatedObjects(group, imageArray, animationName, spriteNumber, spriteStatusName, spriteStatusValue, randomPosStartX, randomPosEndX, randomPosStartY, randomPosEndY) {
     for (var i = 0; i < spriteNumber; i++) {
         group[i] = createSprite(random(randomPosStartX, randomPosEndX), random(randomPosStartY, randomPosEndY));
@@ -59,7 +58,7 @@ function loadAnimatedObjects(group, imageArray, animationName, spriteNumber, spr
     };
 };
 
-// Cài nền đất
+// Set up ground 
 function loadPlatforms() {
     img = loadImage('imgs/scene/platform.png');
     for (i = 0; i < 70; i++) {
@@ -73,7 +72,7 @@ function loadPlatforms() {
     };
 };
 
-// Cài T-REX 
+// Setup T-rex 
 function T_Rex_Animation() {
     T_rex = createSprite(gaConfig.startingPointX, gaConfig.startingPointY, gaConfig.startingPoint, 0.5);
     T_rex.addAnimation("stand", 'imgs/tRex/rex06.png');
